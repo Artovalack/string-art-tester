@@ -35,7 +35,7 @@ const toolHotkeys: Record<string, Tool> = {
   n: "nail",
   t: "thread",
   i: "image",
-  p: "pan",
+  f: "pan",
 };
 
 export default function App() {
