@@ -439,12 +439,12 @@ export default function App() {
         </div>
 
         {tool === "thread" && activeThreadId && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-blue-600/90 backdrop-blur-md rounded-lg text-sm text-white shadow-lg">
+          <div className="pointer-events-none fixed bottom-4 left-1/2 z-20 -translate-x-1/2 px-4 py-2 rounded-lg border border-blue-500/30 bg-blue-600/70 backdrop-blur-md text-sm text-white/90 shadow-lg">
             Click nails to build thread sequence — click "Done" when finished
           </div>
         )}
         {tool === "nail" && (
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 bg-panel backdrop-blur-md border border-subtle rounded-lg text-sm text-secondary">
+          <div className="pointer-events-none fixed bottom-4 left-1/2 z-20 -translate-x-1/2 px-4 py-2 rounded-lg border border-subtle bg-panel/70 backdrop-blur-md text-sm text-secondary/80 shadow-lg">
             Click canvas to place nails — double-click a nail to delete
           </div>
         )}
