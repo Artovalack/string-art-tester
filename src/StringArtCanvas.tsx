@@ -32,6 +32,27 @@ interface Props {
   onZoomChange: (zoom: number) => void;
 }
 
+function getGridStrokeStyle(backgroundColor: string): string {
+  const normalized = backgroundColor.trim().toLowerCase();
+  const hexMatch = normalized.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+
+  if (!hexMatch) {
+    return "rgba(15, 23, 42, 0.16)";
+  }
+
+  const hex = hexMatch[1];
+  const fullHex = hex.length === 3
+    ? hex.split("").map((c) => c + c).join("")
+    : hex;
+
+  const r = parseInt(fullHex.slice(0, 2), 16);
+  const g = parseInt(fullHex.slice(2, 4), 16);
+  const b = parseInt(fullHex.slice(4, 6), 16);
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+
+  return luminance > 0.7 ? "rgba(15, 23, 42, 0.16)" : "rgba(255, 255, 255, 0.12)";
+}
+
 const StringArtCanvas = forwardRef<CanvasHandle, Props>(function StringArtCanvas(props, ref) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -67,7 +88,7 @@ const StringArtCanvas = forwardRef<CanvasHandle, Props>(function StringArtCanvas
     ctx.fillStyle = settings.backgroundColor;
     ctx.fillRect(0, 0, cfg.width, cfg.height);
 
-    if (imageLayer && imageRef.current) {
+    if (imageLayer && imageLayer.visible && imageRef.current) {
       const img = imageRef.current;
       ctx.globalAlpha = imageLayer.opacity;
       const w = img.naturalWidth * imageLayer.scale;
@@ -77,7 +98,7 @@ const StringArtCanvas = forwardRef<CanvasHandle, Props>(function StringArtCanvas
     }
 
     if (settings.showGrid) {
-      ctx.strokeStyle = "rgba(255,255,255,0.06)";
+      ctx.strokeStyle = getGridStrokeStyle(settings.backgroundColor);
       ctx.lineWidth = 1;
       const gs = settings.gridSize;
       ctx.beginPath();
@@ -295,7 +316,7 @@ const StringArtCanvas = forwardRef<CanvasHandle, Props>(function StringArtCanvas
       ctx.fillStyle = settings.backgroundColor;
       ctx.fillRect(0, 0, cfg.width, cfg.height);
 
-      if (imageLayer && imageRef.current) {
+      if (imageLayer && imageLayer.visible && imageRef.current) {
         const img = imageRef.current;
         ctx.globalAlpha = imageLayer.opacity;
         const w = img.naturalWidth * imageLayer.scale;

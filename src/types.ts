@@ -35,6 +35,7 @@ export interface ImageLayer {
   y: number;
   scale: number;
   opacity: number;
+  visible: boolean;
   locked: boolean;
   naturalWidth: number;
   naturalHeight: number;

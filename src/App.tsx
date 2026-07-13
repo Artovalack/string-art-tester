@@ -62,6 +62,13 @@ export default function App() {
     document.documentElement.classList.toggle("light", theme === "light");
   }, [theme]);
 
+  useEffect(() => {
+    setSettings((prev) => ({
+      ...prev,
+      backgroundColor: theme === "light" ? "#f8fafc" : prev.backgroundColor === "#f8fafc" ? "#0a0a0a" : prev.backgroundColor,
+    }));
+  }, [theme]);
+
   const canvasCompRef = useRef<CanvasHandle>(null);
 
   // --- Undo/Redo history ---
@@ -284,6 +291,7 @@ export default function App() {
           y: (canvas.height - h) / 2,
           scale,
           opacity: 0.5,
+          visible: true,
           locked: true,
           naturalWidth: img.naturalWidth,
           naturalHeight: img.naturalHeight,

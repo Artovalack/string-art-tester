@@ -516,6 +516,13 @@ export default function ControlPanel(props: Props) {
               </div>
               <div className="flex items-center gap-2">
                 <button
+                  onClick={() => props.onImageLayerChange({ visible: !imageLayer.visible })}
+                  className="flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors"
+                >
+                  {imageLayer.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+                  {imageLayer.visible ? "Visible" : "Hidden"}
+                </button>
+                <button
                   onClick={() => props.onImageLayerChange({ locked: !imageLayer.locked })}
                   className="flex items-center gap-1.5 text-xs text-secondary hover:text-primary transition-colors"
                 >
