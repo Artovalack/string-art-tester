@@ -30,6 +30,14 @@ function uid(prefix: string): string {
 
 const MAX_HISTORY = 100;
 
+const toolHotkeys: Record<string, Tool> = {
+  v: "select",
+  n: "nail",
+  t: "thread",
+  i: "image",
+  p: "pan",
+};
+
 export default function App() {
   const [canvas, setCanvas] = useState<CanvasConfig>(defaultCanvas);
   const [settings, setSettings] = useState<CanvasSettings>(defaultSettings);
@@ -118,14 +126,34 @@ export default function App() {
   // Keyboard shortcuts
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const target = e.target;
+      const isEditableTarget =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        (target instanceof HTMLElement && target.isContentEditable);
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z" && !e.shiftKey) {
         e.preventDefault();
         onUndo();
-      } else if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) {
+        return;
+      }
+
+      if ((e.ctrlKey || e.metaKey) && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) {
         e.preventDefault();
         onRedo();
+        return;
+      }
+
+      if (isEditableTarget || e.altKey) return;
+
+      const nextTool = toolHotkeys[e.key.toLowerCase()];
+      if (nextTool) {
+        e.preventDefault();
+        setTool((prev) => (prev === nextTool ? prev : nextTool));
       }
     };
+
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onUndo, onRedo]);

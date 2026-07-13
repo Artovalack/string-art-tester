@@ -165,12 +165,12 @@ function ColorInput({ value, onChange }: { value: string; onChange: (v: string) 
   );
 }
 
-const toolButtons: { tool: Tool; label: string; icon: ReactNode }[] = [
-  { tool: "select", label: "Select", icon: <Square size={16} /> },
-  { tool: "nail", label: "Nail", icon: <Circle size={16} /> },
-  { tool: "thread", label: "Thread", icon: <Spline size={16} /> },
-  { tool: "image", label: "Image", icon: <ImageIcon size={16} /> },
-  { tool: "pan", label: "Pan", icon: <Plus size={16} className="rotate-45" /> },
+const toolButtons: { tool: Tool; label: string; hotkey: string; icon: ReactNode }[] = [
+  { tool: "select", label: "Select", hotkey: "V", icon: <Square size={16} /> },
+  { tool: "nail", label: "Nail", hotkey: "N", icon: <Circle size={16} /> },
+  { tool: "thread", label: "Thread", hotkey: "T", icon: <Spline size={16} /> },
+  { tool: "image", label: "Image", hotkey: "I", icon: <ImageIcon size={16} /> },
+  { tool: "pan", label: "Pan", hotkey: "P", icon: <Plus size={16} className="rotate-45" /> },
 ];
 
 export default function ControlPanel(props: Props) {
@@ -229,7 +229,7 @@ export default function ControlPanel(props: Props) {
             <button
               key={tb.tool}
               onClick={() => props.onToolChange(tb.tool)}
-              title={tb.label}
+              title={`${tb.label} (${tb.hotkey})`}
               className={`flex flex-col items-center gap-1 py-2 rounded-lg transition-all ${
                 tool === tb.tool
                   ? "bg-blue-600 text-white"
@@ -238,6 +238,7 @@ export default function ControlPanel(props: Props) {
             >
               {tb.icon}
               <span className="text-[10px] font-medium">{tb.label}</span>
+              <span className="text-[9px] uppercase tracking-wide opacity-70">{tb.hotkey}</span>
             </button>
           ))}
         </div>
@@ -323,7 +324,23 @@ export default function ControlPanel(props: Props) {
           </div>
           {settings.showGrid && (
             <div>
-              <Label>Grid Size: {pxToUnit(settings.gridSize, canvas.unit, canvas.dpi).toFixed(2)} {canvas.unit}</Label>
+              <Label>Grid Size</Label>
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  type="number"
+                  value={Number(pxToUnit(settings.gridSize, canvas.unit, canvas.dpi).toFixed(2))}
+                  min={canvas.unit === "px" ? 1 : 0.01}
+                  step={canvas.unit === "px" ? 1 : 0.1}
+                  onChange={(e) => {
+                    const parsed = parseFloat(e.target.value);
+                    props.onSettingsChange({ gridSize: Math.round(unitToPx(Number.isFinite(parsed) ? parsed : 0, canvas.unit, canvas.dpi)) });
+                  }}
+                  className="flex-1 px-2.5 py-1.5 text-sm bg-input border border-border-input rounded-md text-primary focus:outline-none focus:border-blue-500 transition-colors"
+                />
+                <span className="px-2.5 py-1.5 text-sm bg-input border border-border-input rounded-md text-secondary min-w-[3.5rem] text-center">
+                  {canvas.unit}
+                </span>
+              </div>
               <Slider
                 value={pxToUnit(settings.gridSize, canvas.unit, canvas.dpi)}
                 min={canvas.unit === "px" ? 5 : 0.1}
